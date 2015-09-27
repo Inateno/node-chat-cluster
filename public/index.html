@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <title>Node Chat</title>
+  </head>
+  <body>
+    <h2>Simple chat</h2>
+    <div id="chat-content" style="height:250px;width:400px;border:1px solid black;padding:10px;resize:both;overflow:auto">Please wait</div>
+    <input id="chat-input" type="text" placeholder="message"/>
+    
+    <script type="text/javascript">
+      var _appPort = 6753;
+      var _content = document.getElementById( "chat-content" );
+      var _url = window.location.hostname;
+      var _autoScroll = true;
+      
+      // when localhost
+      if ( !_url.match( "http" ) )
+        _url = "http://" + _url;
+      
+      window._content = _content;
+      
+      window.addEventListener( "load", function()
+      {
+        console.log( "window loaded" );
+        var tag = document.createElement( 'script' );
+        tag.src = _url + ":" + _appPort + '/socket.io/socket.io.js';
+        
+        tag.onload = function()
+        {
+          console.log( '%cSocket.io loaded !', "color:green" );
+          init();
+          document.body.removeChild( tag );
+          tag.onload = null;
+          tag.onerror = null;
+          tag = null;
+        }
+        tag.onerror = function()
+        {
+          alert( "Cannot retrieve socket.io" );
+          
+          var error = document.createElement( "div" );
+          error.innerHTML = "Error while loading Socket.io";
+          _content.appendChild( error );
+          
+          document.body.removeChild( tag );
+          tag.onload = null;
+          tag.onerror = null;
+          tag = null;
+        }
+        document.body.appendChild( tag );
+      } );
+      
+      function init()
+      {
+        if ( !io )
+        {
+          console.log( "An error occurred, io cannot be found after lib loading" );
+          alert( "An error occurred, io cannot be found after lib loading" );
+          return;
+        }
+        
+        var status = document.createElement( "div" );
+        status.innerHTML = "Connecting to server...";
+        _content.appendChild( status );
+               
+        var socket = io.connect( _url + ":" + _appPort );
+        
+        socket.on( "message-enter", function( message )
+        {
+          if ( _content.scrollHeight - _content.scrollTop <= _content.offsetHeight )
+            _autoScroll = true;
+          else
+            _autoScroll = false;
+          
+          var msg = document.createElement( "div" );
+          var tester = message.split( ": " );
+          
+          // system message
+          if ( tester.length == 1 )
+          {
+            msg.style.color = "red";
+            msg.innerHTML = message;
+          }
+          else
+          {
+            var nickDom = document.createElement( "b" );
+            nickDom.setAttribute( "title", "sent at: " + new Date().toLocaleString() );
+            nickDom.innerHTML = tester[ 0 ] + ": ";
+            var msgDom = document.createElement( "span" );
+            msgDom.innerHTML = message.slice( tester[ 0 ].length + 2, message.length );
+            msg.appendChild( nickDom );
+            msg.appendChild( msgDom );
+          }
+          
+          _content.appendChild( msg );
+          
+          if ( _autoScroll )
+            _content.scrollTop = _content.scrollHeight;
+        } );
+        
+        var input = document.getElementById( "chat-input" );
+        input.addEventListener( "keydown", function( e )
+        {
+          if ( e.keyCode == 13 && input.value.trim() != "" )
+          {
+            socket.emit( "send-message", input.value.trim() );
+            input.value = "";
+          }
+        } );
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "chat",
+  "version": "0.0.1",
+  "dependencies": {
+    "requirejs": "",
+    "socket.io": "",
+    "express": "",
+    "serve-favicon": "",
+    "errorhandler": ""
+  }
+}
