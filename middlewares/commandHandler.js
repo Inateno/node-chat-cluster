@@ -59,17 +59,31 @@ function( config, shared, rooms )
           {
             socket.nick = nick;
             socket.write( 'Welcome on board ' + socket.nick + ' you are now able to chat !' );
+            socket.write( 'Type /help for commands' );
             shared.socketsByNick[ socket.nick.toLowerCase() ] = socket;
             rooms.join( socket, config.mainRoom );
           }
           else
           {
+            process.send( {
+              cmd   : "message-enter"
+              ,msg  : socket.nick + " changed nickname to " + nick
+              ,room : socket.room
+            } );
             socket.nick = nick;
-            socket.write( 'Nickname changed to ' + socket.nick );
           }
         }
         else
           socket.write( 'Please set a nick by typing /nick MyNickName before chatting' );
+        break;
+      
+      case "help":
+        socket.write( "List of available commands:"
+          + "\n /end (to disconnect)"
+          + "\n /join roomName (to change room)"
+          + "\n /leave (to leave current room)"
+          + "\n /to userNick message (to send a private message)"
+          + "\n /nick nickname (to change your nickname)" );
         break;
       
       // join a room

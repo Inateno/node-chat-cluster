@@ -12,7 +12,7 @@ function( shared )
     if ( packet.room )
     {
       // nothing more to do
-      if ( !shared.rooms [ packet.room ] || shared.rooms [ packet.room ].length == 0 )
+      if ( !shared.rooms[ packet.room ] || shared.rooms[ packet.room ].length == 0 )
         return;
       
       for ( var i = 0, s; s = shared.rooms[ packet.room ][ i ]; ++i )

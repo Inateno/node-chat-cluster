@@ -1,9 +1,9 @@
 define( [ "config", "shared", "express", "path", "errorhandler", "serve-favicon", "http"
         , "socket.io" /** /,"socket.io-redis", "toobusy"/**/
-        , "mid.dataReceiver" ],
+        , "mid.dataReceiver", "mid.broadcaster", "mid.closeSocket" ],
 function( config, shared, express, path, errorHandler, favicon, http
         , socket_io /** /,socket.io-redis, toobusy/**/
-        , dataReceiver )
+        , dataReceiver, broadcaster, closeSocket  )
 {
   // on windows installing toobusy is quite tricky, so this trick prevent crash if the lib doesn't exist
   var toobusy = toobusy || function(){};
@@ -58,13 +58,20 @@ function( config, shared, express, path, errorHandler, favicon, http
       
       socket.write = function( message )
       {
-        socket.emit( "message-enter", message );
+        socket.emit( "message-enter", message.replace( /\n/gi, "<br />" ) );
       };
       
       socket.on( "send-message", function( value )
       {
         dataReceiver( socket, value );
       } );
+      
+      socket.end = function()
+      {
+        closeSocket( socket );
+        socket.emit( "message-enter", "You are now disconnected" );
+        socket.disconnect();
+      }
     } );
     
     // launch the server listening

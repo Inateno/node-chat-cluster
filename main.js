@@ -15,6 +15,7 @@ requirejs.config( {
     ,"mid.commandHandler"    : "middlewares/commandHandler"
     ,"mid.dataReceiver"      : "middlewares/dataReceiver"
     ,"mid.rooms"             : "middlewares/rooms"
+    ,"mid.closeSocket"       : "middlewares/closeSocket"
     //, "mid.emoticonsParser": "middlewares/emoticonsParser"
   }
 } );

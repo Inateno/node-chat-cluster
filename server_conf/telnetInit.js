@@ -1,22 +1,6 @@
-define( [ "config", "shared", "mid.dataReceiver", "mid.broadcaster" ],
-function( config, shared, dataReceiver, broadcaster )
+define( [ "config", "shared", "mid.dataReceiver", "mid.closeSocket" ],
+function( config, shared, dataReceiver, closeSocket )
 {
-  /***
-   * Simple Method executed when a socket ends
-   */
-  function closeSocket( socket )
-  {
-    console.log( ( socket.nick || "guest" ) + " leaved" );
-    var i = shared.telnetSockets.indexOf( socket );
-    if ( i != -1 )
-    {
-      shared.telnetSockets.splice( i, 1 );
-      if ( socket.nick )
-        delete shared.socketsByNick[ socket.nick ];
-    }
-    broadcaster( { room: socket.room || "main", msg: ( socket.nick || "guest " ) + " disconnected" } );
-  }
-  
   function newSocket( socket )
   {
     console.log( "A connection appear on worker " + shared.workerId );

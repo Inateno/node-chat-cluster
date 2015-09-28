@@ -22,7 +22,7 @@ function( config, shared )
       // on first join there is no room defined
       if ( socket.room )
       {
-        socket.write( 'You leaved room ' + socket.room + ' and entered ' + roomName + ". " );
+        socket.write( 'You left room ' + socket.room + ' and entered ' + roomName + ". " );
         this.leave( socket, roomName );
       }
       
@@ -54,7 +54,7 @@ function( config, shared )
       // send message to other users
       process.send( {
         cmd   : "message-enter"
-        ,msg  : socket.nick + " leaved the room"
+        ,msg  : socket.nick + " left the room"
         ,room : socket.room
         ,avoid: socket.nick.toLowerCase()
       } );
